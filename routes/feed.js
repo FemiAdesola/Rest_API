@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const {body} = require('express-validator');
 
 const feedController = require('../controllers/feed')
 
@@ -9,6 +10,12 @@ const router = express.Router();
 router.get('/posts', feedController.getPosts);
 
 // POST /feed/posts
-router.post('/post', feedController.createPosts);
+router.post('/post',
+    // feededit in frontend
+    [
+        body('title').trim().isLength({ min: 5 }),
+        body('content').trim().isLength({ min: 5 })
+    ],
+    feedController.createPosts);
 
 module.exports = router;
