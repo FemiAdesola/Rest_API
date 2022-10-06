@@ -1,4 +1,5 @@
 'use strict';
+const Post = require('../models/post')
 const {validationResult}=require('express-validator')
 exports.getPosts = (req, res, next) => {
     res
@@ -50,16 +51,23 @@ exports.createPosts = (req, res, next) => {
     }
     const title = req.body.title;
     const content = req.body.content;
-    res.status(201).json({
+    // database
+    const post = new Post({
+        title: title,
+        content: content,
+        imageUrl: 'images/book.jpeg',
+        creator: {name:'Femi'},
+    });
+    post.save()
+        .then(result => {
+            console.log(result)
+            res.status(201).json({
             message: 'Post created successfully',
-            post: {
-                _id: new Date().toISOString(),
-                title: title,
-                content: content,
-                creator: {
-                        name:'Femi'
-                    },
-                createdAt: new Date()
-            }
+            post: result
         });
+        })
+        .catch(error => {
+        console.log(error)
+        });
+    //
 };
