@@ -13,7 +13,7 @@ router.get('/posts', feedController.getPosts);
 router.post('/post',
     // feededit in frontend
     [
-        body('title').trim().isLength({ min: 5 }),
+        body('title').trim().isLength({ min: 6 }),
         body('content').trim().isLength({ min: 5 })
     ],
     feedController.createPosts);
