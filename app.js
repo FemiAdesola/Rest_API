@@ -1,8 +1,12 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const feedRoutes = require('./routes/feed');
+
+// for database
+const MONGODB_URL = 'mongodb+srv://Femi:CwRbXZuHSUaMW9yH@shop.fftoabl.mongodb.net/messages';
 
 const app = express();
 
@@ -18,4 +22,12 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoutes);
 
-app.listen(5050);
+
+// server connection with mongoose 
+mongoose.connect(MONGODB_URL)
+    .then(result => {
+        app.listen(5050);
+    })
+    .catch(error => {
+        console.log(error)
+    });
