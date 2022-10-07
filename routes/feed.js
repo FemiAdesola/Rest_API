@@ -9,7 +9,7 @@ const router = express.Router();
 // GET /feed/posts
 router.get('/posts', feedController.getPosts);
 
-// POST /feed/posts
+// POST /feed/post
 router.post('/post',
     // feededit in frontend
     [
@@ -30,5 +30,8 @@ router.put('/post/:postId',
     ],
     feedController.updatePost
 );
+
+// delete 
+router.delete('/post/:postId',feedController.deletePost );
 
 module.exports = router;
