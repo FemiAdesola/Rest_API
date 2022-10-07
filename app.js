@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const multer = require('multer');
 
 const mongoose = require('mongoose');
 
@@ -12,8 +13,36 @@ const MONGODB_URL = 'mongodb+srv://Femi:CwRbXZuHSUaMW9yH@shop.fftoabl.mongodb.ne
 
 const app = express();
 
+// for file storage for image
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  }
+});
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true)
+  } else{
+  
+    cb(null, false)
+  }
+}
+//
+
 // app.use(bodyParser.urlencoded()); // x-wwww-for.urlencoded <form>
-app.use(bodyParser.json()); // application/json
+
+// app.use(bodyParser.json()); // application/json
+
+app.use(express.json());
+// for multer || the name image is comming from ejs file 
+app.use(multer({storage:fileStorage, fileFilter:fileFilter}).single('image'));
 
 // for serving image statically 
 app.use('/images', express.static(path.join(__dirname, 'images')));
