@@ -13,7 +13,7 @@ router.get('/posts', feedController.getPosts);
 router.post('/post',
     // feededit in frontend
     [
-        body('title').trim().isLength({ min: 6 }),
+        body('title').trim().isLength({ min: 5 }),
         body('content').trim().isLength({ min: 5 })
     ],
     feedController.createPosts
@@ -22,5 +22,13 @@ router.post('/post',
 // GET
 router.get('/post/postId', feedController.getPost);
 
+// PUT
+router.put('/post/:postId',
+    [
+        body('title').trim().isLength({ min: 5 }),
+        body('content').trim().isLength({ min: 5 })
+    ],
+    feedController.updatePost
+);
 
 module.exports = router;
