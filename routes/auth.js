@@ -7,6 +7,7 @@ const authController = require('../controllers/auth');
 
 const router = express.Router();
 
+// signup 
 router.put('/signup', [
     body('email').isEmail().withMessage('Please enter a nalid email')
         .custom((value, { req }) => {
@@ -24,5 +25,8 @@ router.put('/signup', [
     ).trim().isLength({min:5}),
     body('name').trim().not().isEmpty()
 ], authController.signup);
+
+// login 
+router.post('/login', authController.login);
 
 module.exports = router;
