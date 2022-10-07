@@ -6,14 +6,29 @@ const path = require('path');
 
 // get posts
 exports.getPosts = (req, res, next) => {
-    // fetch from dataabse
+ // for pagination 
+    const currentPage = req.query.page || 1;
+    const perPage = 2;
+    let totalItems;
+     
     Post.find()
+        .countDocuments()
+        .then(count => {
+        totalItems = count;
+        return Post.find()
+            .skip((currentPage - 1) * perPage)
+            .limit(perPage);
+        })
+    //
+
+        // fetch from dataabse
         .then(posts => {
             res
                 .status(200)
                 .json({
                     message: 'Fetched posts successfully.',
-                    posts: posts
+                    posts: posts,
+                    totalItems:totalItems
                 });
         })
         .catch(error => {
