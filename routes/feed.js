@@ -16,14 +16,15 @@ router.post('/post',
         body('title').trim().isLength({ min: 5 }),
         body('content').trim().isLength({ min: 5 })
     ],
-    feedController.createPosts
+    feedController.createPost
 );
 
-// GET
-router.get('/post/postId', feedController.getPost);
+// GET to get single 
+router.get('/post/:postId', feedController.getPost);
 
 // PUT
-router.put('/post/:postId',
+router.put(
+  '/post/:postId',
     [
         body('title').trim().isLength({ min: 5 }),
         body('content').trim().isLength({ min: 5 })

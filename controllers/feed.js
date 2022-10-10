@@ -41,7 +41,7 @@ exports.getPosts = (req, res, next) => {
 
 
 // create post 
-exports.createPosts = (req, res, next) => {
+exports.createPost = (req, res, next) => {
     const errors = validationResult(req);
     // error handling 
     if (!errors.isEmpty()) {
@@ -56,7 +56,6 @@ exports.createPosts = (req, res, next) => {
         throw error;
     }
     //
-
     const imageUrl = req.file.path;
     const title = req.body.title;
     const content = req.body.content;
@@ -74,7 +73,7 @@ exports.createPosts = (req, res, next) => {
             res.status(201).json({
             message: 'Post created successfully',
             post: result
-        });
+            });
         })
         .catch(error => {
             if (!error.statusCode) {
@@ -110,6 +109,7 @@ exports.getPost = (req, res, next) => {
 exports.updatePost = (req, res, next) => {
     const postId = req.params.postId;
     // error handling 
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed, entered data is incorrect.')
         error.statusCode = 422;
@@ -142,7 +142,7 @@ exports.updatePost = (req, res, next) => {
             post.title = title;
             post.imageUrl = imageUrl;
             post.content = content;
-            return post, save();
+            return post.save();
         })
         .then(result => {
             res.status(200).json({
