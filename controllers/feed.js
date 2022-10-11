@@ -149,6 +149,14 @@ exports.updatePost = (req, res, next) => {
                 error.statusCode = 404;
                 throw error;
             }
+            // for creating authrozation for the user to delete and update
+            if (post.creator.toString() !== req.userId) {
+                const error = new Error('Not authorized.');
+                error.statusCode = 403;
+                throw error;
+            };
+            //
+
             // clear image
             if (imageUrl !== post.imageUrl) {
                 clearImage(post.imageUrl);
@@ -184,6 +192,14 @@ exports.deletePost = (req, res, next) => {
                 error.statusCode = 404;
                 throw error;
             }
+            // for creating authrozation for the user to delete and update
+            if (post.creator.toString() !== req.userId) {
+                const error = new Error('Not authorized.');
+                error.statusCode = 403;
+                throw error;
+            };
+            //
+            
             // check looged in user later
             clearImage(post.imageUrl);
             return Post.findByIdAndRemove(postId);
