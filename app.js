@@ -75,7 +75,14 @@ app.use((error, req, res, next) => {
 // server connection with mongoose 
 mongoose.connect(MONGODB_URL)
     .then(result => {
-        app.listen(5050);
+        // app.listen(5050);
+      // for io sockect connection ./socket come from socket.js
+      const server = app.listen(5050);
+      const io = require('./socket').init(server);
+      // io.on("connection", (socket) => {
+      //   console.log('Client connected')
+      // })
+      //
     })
     .catch(error => {
         console.log(error)

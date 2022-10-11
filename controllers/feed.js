@@ -1,9 +1,11 @@
 'use strict';
-const Post = require('../models/post')
+
 const { validationResult } = require('express-validator');
 const fs = require('fs');
 const path = require('path');
 
+const Post = require('../models/post');
+const io = require('../socket');
 const User = require('../models/user');
 
 // get posts---------------------------------------------------------
@@ -14,6 +16,10 @@ exports.getPosts = async(req, res, next) => {
     try {
         const totalItems = await Post.find().countDocuments();
         const posts = await Post.find()
+            .populate('creator')
+            // for sorting 
+            .sort({ createdAt: -1 })
+            //
             .skip((currentPage - 1) * perPage)
             .limit(perPage);
         //
@@ -64,6 +70,18 @@ exports.createPost = async(req, res, next) => {
         const user = await User.findById(req.userId);
         user.posts.push(post);
         await user.save();
+
+        // for io socket
+        io.getIO().emit('posts', {
+            action: 'create',
+            post: {...post._doc, creator: {
+                    _id: req.userId,
+                    name: user.name
+                }
+            }
+        });
+        //
+
         res.status(201).json({
             message: 'Post created successfully',
             post: post,
@@ -122,14 +140,14 @@ exports.updatePost = async(req, res, next) => {
     }
     // after checking value we can update by the code below
     try {
-        const post = await Post.findById(postId)
+        const post = await Post.findById(postId).populate('creator')
         if (!post) {
             const error = new Error('Could not find post.');
             error.statusCode = 404;
             throw error;
         }
         // for creating authrozation for the user to delete and update
-        if (post.creator.toString() !== req.userId) {
+        if (post.creator._id.toString() !== req.userId) {
             const error = new Error('Not authorized.');
             error.statusCode = 403;
             throw error;
@@ -144,6 +162,13 @@ exports.updatePost = async(req, res, next) => {
         post.imageUrl = imageUrl;
         post.content = content;
         const result = await post.save();
+
+        // for io socket
+        io.getIO().emit('posts', {
+            action: 'update',
+            post: result
+        });
+        //
         res.status(200).json({
             message: 'Post updated!',
             post: result
