@@ -182,7 +182,7 @@ exports.updatePost = async(req, res, next) => {
     }
 };
 
-// deletePost ------------------------------------------------------
+// -------------------deletePost -----------------------------------
 exports.deletePost = async(req, res, next) => {
     const postId = req.params.postId;
     try {
@@ -210,6 +210,13 @@ exports.deletePost = async(req, res, next) => {
         user.posts.pull(postId)
         await user.save();
     //
+        // io socket connect
+        io.getIO().emit(
+            'posts', {
+            action: 'delete', post: postId
+        });
+        //
+
         res.status(200).json({
             message: 'Post deleted!'
         });

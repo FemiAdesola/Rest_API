@@ -79,10 +79,10 @@ mongoose.connect(MONGODB_URL)
       // for io sockect connection ./socket come from socket.js
       const server = app.listen(5050);
       const io = require('./socket').init(server);
-      // io.on("connection", (socket) => {
-      //   console.log('Client connected')
-      // })
-      //
+      io.on('connection', socket => {
+      console.log('Client connected');
+    });
+      
     })
     .catch(error => {
         console.log(error)
