@@ -16,8 +16,10 @@ const postSchema = new Schema({
         type: String,
         required: true
     },
-   creator: {
-        type: Object,
+    creator: {
+       // to connect post with user we change type:Object to schema.Types.ObjectId and added ref
+        type: Schema.Types.ObjectId,
+        ref:'User',
         required: true
     }  
     
