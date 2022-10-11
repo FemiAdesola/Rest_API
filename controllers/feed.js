@@ -11,7 +11,6 @@ exports.getPosts = async(req, res, next) => {
  // for pagination 
     const currentPage = req.query.page || 1;
     const perPage = 2;
-    let totalItems;
     try {
         const totalItems = await Post.find().countDocuments();
         const posts = await Post.find()
@@ -51,8 +50,6 @@ exports.createPost = async(req, res, next) => {
     const imageUrl = req.file.path;
     const title = req.body.title;
     const content = req.body.content;
-    
-    let creator;
     // function to create post to database
     const post = new Post({
         title: title,
@@ -64,14 +61,13 @@ exports.createPost = async(req, res, next) => {
     });
     try {
         await post.save()   
-        console.log(result)
         const user = await User.findById(req.userId);
         user.posts.push(post);
         await user.save();
         res.status(201).json({
             message: 'Post created successfully',
             post: post,
-            creator: { _id: creator._id, name: creator.name }
+            creator: { _id: user._id, name: user.name }
         });
         //
     } catch(error) {
