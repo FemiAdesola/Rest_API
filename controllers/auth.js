@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // const path = require('path');
 
 const User = require('../models/user');
-const { Error } = require('mongoose');
+// const { Error } = require('mongoose');
 
 // signup 
 exports.signup = (req, res, next) => {
@@ -15,8 +15,8 @@ exports.signup = (req, res, next) => {
     // error handling 
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed!.');
-        error.data = error.array();
         error.statusCode = 422;
+        error.data = error.array();
         throw error;
     }
     const email = req.body.email;
@@ -61,7 +61,7 @@ exports.login = (req, res, next) => {
                 throw error;
             }
             loadedUser = user;
-            bcrypt.compare(password, user.password);
+            return bcrypt.compare(password, user.password);
         })
         .then(isTheSame => {
             if (!isTheSame) {
