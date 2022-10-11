@@ -22,7 +22,6 @@ exports.getPosts = (req, res, next) => {
             .limit(perPage);
         })
     //
-
         // fetch from dataabse
         .then(posts => {
             res
@@ -41,8 +40,7 @@ exports.getPosts = (req, res, next) => {
         });
 };
 
-
-// create post 
+// create post ---------------------------------------
 exports.createPost = (req, res, next) => {
     const errors = validationResult(req);
     // error handling 
@@ -99,7 +97,7 @@ exports.createPost = (req, res, next) => {
     //
 };
 
-// get post 
+// get post --------------------------------------------
 exports.getPost = (req, res, next) => {
     const postId = req.params.postId;
     Post.findById(postId)
@@ -120,7 +118,7 @@ exports.getPost = (req, res, next) => {
         });
 }
 
-// Update post 
+// Update post ------------------------------------------------------
 exports.updatePost = (req, res, next) => {
     const postId = req.params.postId;
     // error handling 
@@ -181,7 +179,7 @@ exports.updatePost = (req, res, next) => {
         })
 };
 
-// deletePost
+// deletePost ------------------------------------------------------
 exports.deletePost = (req, res, next) => {
     const postId = req.params.postId;
     Post.findById(postId)
@@ -199,15 +197,25 @@ exports.deletePost = (req, res, next) => {
                 throw error;
             };
             //
-            
-            // check looged in user later
+
+            // check logged 
             clearImage(post.imageUrl);
             return Post.findByIdAndRemove(postId);
         })
         .then(result => {
+            // For clearing Post and user relation
+            return User.findById(req.userId);
+            
+        })
+        .then(user => {
+            user.posts.pull(postId)
+            return user.save();
+        })
+        //
+        .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Post deleted!'
+            message: 'Post deleted!'
             });
         })
         .catch(error => {
