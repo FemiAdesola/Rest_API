@@ -74,7 +74,7 @@ app.use((error, req, res, next) => {
 
 // server connection with mongoose 
 mongoose.connect(MONGODB_URL)
-    .then(result => {
+    .then(() => {
         // app.listen(5050);
       // for io sockect connection ./socket come from socket.js
       const server = app.listen(5050);
